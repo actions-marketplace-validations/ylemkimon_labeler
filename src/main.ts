@@ -185,7 +185,7 @@ function checkAny(changedFiles: string[], globs: string[]): boolean {
 // equivalent to "Array.every()" but expanded for debugging and clarity
 function checkAll(changedFiles: string[], globs: string[]): boolean {
   const matchers = globs.map(g => new Minimatch(g));
-  cconsole.log(` checking "all" patterns`);
+  console.log(` checking "all" patterns`);
   for (const changedFile of changedFiles) {
     if (!isMatch(changedFile, matchers)) {
       console.log(`  "all" patterns did not match against ${changedFile}`);
