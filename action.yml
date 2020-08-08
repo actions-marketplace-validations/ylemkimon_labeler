@@ -1,4 +1,4 @@
-name: 'Labeler'
+name: 'Labeler-test'
 description: 'Add labels to new pull requests based on the files that are changed'
 author: 'GitHub'
 inputs: 
