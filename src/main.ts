@@ -23,7 +23,7 @@ async function run() {
 
     const client = new github.GitHub(token);
 
-    core.debug(`fetching changed files for pr #${prNumber}`);
+    console.log(`fetching changed files for pr #${prNumber}`);
     const changedFiles: string[] = await getChangedFiles(client, prNumber);
     const labelGlobs: Map<string, StringOrMatchConfig[]> = await getLabelGlobs(
       client,
@@ -32,7 +32,7 @@ async function run() {
 
     const labels: string[] = [];
     for (const [label, globs] of labelGlobs.entries()) {
-      core.debug(`processing ${label}`);
+      console.log(`processing ${label}`);
       if (checkGlobs(changedFiles, globs)) {
         labels.push(label);
       }
@@ -68,9 +68,9 @@ async function getChangedFiles(
 
   const changedFiles = listFilesResponse.data.map(f => f.filename);
 
-  core.debug('found changed files:');
+  console.log('found changed files:');
   for (const file of changedFiles) {
-    core.debug('  ' + file);
+    console.log('  ' + file);
   }
 
   return changedFiles;
@@ -144,7 +144,7 @@ function checkGlobs(
   globs: StringOrMatchConfig[]
 ): boolean {
   for (const glob of globs) {
-    core.debug(` checking pattern ${JSON.stringify(glob)}`);
+    console.log(` checking pattern ${JSON.stringify(glob)}`);
     const matchConfig = toMatchConfig(glob);
     if (checkMatch(changedFiles, matchConfig)) {
       return true;
@@ -154,46 +154,46 @@ function checkGlobs(
 }
 
 function isMatch(changedFile: string, matchers: IMinimatch[]): boolean {
-  core.debug(`    matching patterns against file ${changedFile}`);
+  console.log(`    matching patterns against file ${changedFile}`);
   for (const matcher of matchers) {
-    core.debug(`   - ${printPattern(matcher)}`);
+    console.log(`   - ${printPattern(matcher)}`);
     if (!matcher.match(changedFile)) {
-      core.debug(`   ${printPattern(matcher)} did not match`);
+      console.log(`   ${printPattern(matcher)} did not match`);
       return false;
     }
   }
 
-  core.debug(`   all patterns matched`);
+  console.log(`   all patterns matched`);
   return true;
 }
 
 // equivalent to "Array.some()" but expanded for debugging and clarity
 function checkAny(changedFiles: string[], globs: string[]): boolean {
   const matchers = globs.map(g => new Minimatch(g));
-  core.debug(`  checking "any" patterns`);
+  console.log(`  checking "any" patterns`);
   for (const changedFile of changedFiles) {
     if (isMatch(changedFile, matchers)) {
-      core.debug(`  "any" patterns matched against ${changedFile}`);
+      console.log(`  "any" patterns matched against ${changedFile}`);
       return true;
     }
   }
 
-  core.debug(`  "any" patterns did not match any files`);
+  console.log(`  "any" patterns did not match any files`);
   return false;
 }
 
 // equivalent to "Array.every()" but expanded for debugging and clarity
 function checkAll(changedFiles: string[], globs: string[]): boolean {
   const matchers = globs.map(g => new Minimatch(g));
-  core.debug(` checking "all" patterns`);
+  cconsole.log(` checking "all" patterns`);
   for (const changedFile of changedFiles) {
     if (!isMatch(changedFile, matchers)) {
-      core.debug(`  "all" patterns did not match against ${changedFile}`);
+      console.log(`  "all" patterns did not match against ${changedFile}`);
       return false;
     }
   }
 
-  core.debug(`  "all" patterns matched all files`);
+  console.log(`  "all" patterns matched all files`);
   return true;
 }
 
